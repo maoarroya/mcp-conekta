@@ -1,0 +1,167 @@
+// openapi.json
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "MCP Server for Conekta",
+    "version": "1.0.0",
+    "description": "Agent-compatible MCP server that wraps Conekta's payment API"
+  },
+  "servers": [
+    {
+      "url": "https://yourdomain.com",
+      "description": "Production Server"
+    }
+  ],
+  "paths": {
+    "/mcp/charges": {
+      "post": {
+        "summary": "Create a charge",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChargeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Charge created"
+          }
+        }
+      }
+    },
+    "/mcp/customers": {
+      "post": {
+        "summary": "Create a customer",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Customer created"
+          }
+        }
+      }
+    },
+    "/mcp/orders": {
+      "post": {
+        "summary": "Create an order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order created"
+          }
+        }
+      }
+    },
+    "/mcp/refunds": {
+      "post": {
+        "summary": "Create a refund",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefundRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Refund created"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ChargeRequest": {
+        "type": "object",
+        "properties": {
+          "amount": { "type": "integer" },
+          "currency": { "type": "string" },
+          "customer_info": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string" },
+              "phone": { "type": "string" }
+            }
+          },
+          "payment_method": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "token_id": { "type": "string" }
+            }
+          }
+        },
+        "required": ["amount", "currency", "customer_info", "payment_method"]
+      },
+      "CustomerRequest": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "phone": { "type": "string" }
+        },
+        "required": ["name", "email", "phone"]
+      },
+      "OrderRequest": {
+        "type": "object",
+        "properties": {
+          "line_items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "unit_price": { "type": "integer" },
+                "quantity": { "type": "integer" }
+              }
+            }
+          },
+          "currency": { "type": "string" },
+          "customer_info": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "email": { "type": "string" },
+              "phone": { "type": "string" }
+            }
+          }
+        },
+        "required": ["line_items", "currency", "customer_info"]
+      },
+      "RefundRequest": {
+        "type": "object",
+        "properties": {
+          "charge_id": { "type": "string" },
+          "amount": { "type": "integer" }
+        },
+        "required": ["charge_id"]
+      }
+    }
+  }
+}

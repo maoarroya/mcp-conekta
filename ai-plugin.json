@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Conekta MCP Plugin",
+  "name_for_model": "conekta_mcp",
+  "description_for_human": "Permite crear cargos, órdenes, clientes y reembolsos con Conekta.",
+  "description_for_model": "Use this plugin to create and manage payments, customers, orders and refunds via Conekta API.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://yourdomain.com/openapi.json"
+  },
+  "logo_url": "https://yourdomain.com/logo.png",
+  "contact_email": "dev@yourcompany.com",
+  "legal_info_url": "https://yourdomain.com/legal"
+}
