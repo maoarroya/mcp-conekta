@@ -1,55 +1,59 @@
-# Pagos únicos con Component
+# Pagos únicos con tarjeta - Tokenizer - Tokenizador
 
-En esta documentación explicamos cómo aceptar pagos únicos con **Tarjeta (crédito y débito), Transferencia electrónica y Efectivo** a través del **Component** (sin necesidad de guardar la tarjeta). Podrás utilizar todo el poder de nuestra API de Pagos con un front end pre-diseñado, que se adapta a las necesidades de tu negocio en línea.
+En esta documentación explicamos cómo aceptar pagos únicos con **Tarjetas de crédito y débito** a través del **Component** (sin necesidad de guardar la tarjeta). Podrás utilizar todo el poder de nuestra API de Pagos con un front end pre-diseñado, que se adapta a las necesidades de tu negocio en línea.
 
 [block:image]
 {
-  "images": [
-    {
-      "image": [
-        "https://files.readme.io/b2863e1-Proceso_Component.png",
-        "Proceso Component.png",
-        1656
-      ],
-      "align": "center",
-      "sizing": "auto"
-    }
-  ]
+"images": [
+{
+"image": [
+"https://files.readme.io/4fa6f9e-sequence-diagram-cargo-unico-componente.drawio.png",
+"sequence-diagram-cargo-unico-componente.drawio.png",
+1100
+],
+"align": "center",
+"sizing": "auto"
+}
+]
 }
 [/block]
-
 
 ## Configurar tu Servidor
 
 ### Instalar el SDK de Conekta
 
-Instala el **SDK** de Conekta para el lenguaje de programación de tu preferencia.
+Instala el SDK de Conekta para el lenguaje de programación de tu preferencia.
 
 ```csharp
 dotnet add package Conekta.net
 ```
-```python Python
+
+```python
 pip install conekta
 ```
-```ruby Ruby
+
+```ruby
 gem install conekta
 ```
-```javascript JavaScript
+
+```javascript
 npm install conekta
 ```
-```go Go
+
+```go
 go get -u github.com/conekta/conekta-go
 ```
+
 ```java
 <dependency>
   <groupId>io.conekta</groupId>
   <artifactId>ct-conekta-java</artifactId>
-  <version>6.1.0</version>
+  <version>6.0.0</version>
   <scope>compile</scope>
 </dependency>
 ```
 
-## Crear un customer (opcional)
+## Crear un Customer (opcional)
 
 Cuando tienes cargos únicos, no es necesario generar un customer en Conekta, pues no vas a asociar ningún método de pago recurrente a éste. Sin embargo si quisieras almacenar en Conekta esta información, puedes seguir las instrucciones.
 
@@ -59,13 +63,13 @@ Con la siguiente llamada crearás un **customer** y obtendrás un **customer_id*
 curl --location --request POST 'https://api.conekta.io/customers' \
 	--header 'Accept: application/vnd.conekta-v2.2.0+json' \
   --header 'Content-Type: application/json' \
-  --header 'Authorization: Bearer key_XXXXXXX' \
+  --header 'Authorization: Bearer key_DwaOLXoX6YCGGvfNifZ3IPwi' \
   --data-raw '{
   	"name": "Felipe Gomez",
-    "email": "felipegomez@mail.com",
-    "phone": "3143159054"
+    "email": "felipegomez@mail.com"
   }'
 ```
+
 ```csharp
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -81,7 +85,7 @@ namespace Example
         {
             Configuration config = new Configuration();
             // Configure Bearer token for authorization: bearerAuth
-            config.AccessToken = "API_KEY";
+            config.AccessToken = "key_xxxx";
 
             var apiInstance = new CustomersApi(config);
             var customer = new(
@@ -95,7 +99,7 @@ namespace Example
                 customReference: "dotnet_12345678"
             );
             var acceptLanguage = "es";  // string | Use for knowing which language to use (optional)  (default to es)
-            
+
             try
             {
                 // Create customer
@@ -112,6 +116,7 @@ namespace Example
     }
 }
 ```
+
 ```python
 import conekta
 import time
@@ -119,7 +124,7 @@ from conekta.rest import ApiException
 from pprint import pprint
 
 configuration = conekta.Configuration(
-    access_token = os.environ["API_KEY"]
+    access_token = os.environ["BEARER_TOKEN"]
 )
 
 with conekta.ApiClient(configuration) as api_client:
@@ -140,13 +145,14 @@ with conekta.ApiClient(configuration) as api_client:
         print("Exception when calling CustomersApi->create_customer: %s\n" % e)
 
 ```
+
 ```ruby
 require 'time'
 require 'conekta'
 # setup authorization
 Conekta.configure do |config|
   # Configure Bearer authorization: bearerAuth
-  config.access_token = 'API_KEY'
+  config.access_token = 'key_xxxx'
 end
 
 api_instance = Conekta::CustomersApi.new
@@ -163,10 +169,11 @@ rescue Conekta::ApiError => e
   puts "Error when calling CustomersApi->create_customer: #{e}"
 end
 ```
+
 ```javascript
 import { CustomersApi, Configuration, Customer, CustomerResponse } from "conekta";
 
-const apikey = "API_KEY";
+const apikey = "key_xxxxx";
 const config = new Configuration({ accessToken: apikey });
 const client = new CustomersApi(config);
 
@@ -183,7 +190,8 @@ client.createCustomer(customer).then(response => {
   console.error("here", error);
 });
 ```
-```go Go
+
+```go
 package main
 
 import (
@@ -199,7 +207,7 @@ func main() {
 	const acceptLanguage = "es"
 	cfg := conekta.NewConfiguration()
 	client := conekta.NewAPIClient(cfg)
-	ctx := context.WithValue(context.TODO(), conekta.ContextAccessToken, "$API_KEY")
+	ctx := context.WithValue(context.TODO(), conekta.ContextAccessToken, "key_DwaOLXoX6YCGGvfNifZ3IPwi")
 	req := conekta.Customer{
 		Name:            "test dot",
 		Phone:           "+573143159063",
@@ -221,8 +229,8 @@ func main() {
 	}
 	fmt.Printf("customer: %v", customer)
 }
-
 ```
+
 ```java
 import com.conekta.*;
 import com.conekta.auth.*;
@@ -236,14 +244,14 @@ public class CustomersApiExample {
 
         // Configure HTTP bearer authorization: bearerAuth
         HttpBearerAuth bearerAuth = (HttpBearerAuth) defaultClient.getAuthentication("bearerAuth");
-        bearerAuth.setBearerToken("API_KEY");
+        bearerAuth.setBearerToken("key_xxxx");
 
         CustomersApi apiInstance = new CustomersApi(defaultClient);
         Customer customer = new Customer(); // Customer | requested field for customer
         customer.setName("Customer Name");
         customer.setEmail("customer@mail.com");
         customer.setPhone("55454545454");
-        String acceptLanguage = "es"; // String | Use for knowing which language to use
+        String acceptLanguage = "es";
         try {
             CustomerResponse result = apiInstance.createCustomer(customer, acceptLanguage,null);
             System.out.println(result);
@@ -259,13 +267,102 @@ public class CustomersApiExample {
 ```
 
 > 🚧 Importante:
-> 
+>
 > Si ya tienes un **customer_id** asociado al usuario al que quieres cobrar, no es necesario que realices este paso de nuevo.
 
-## Crear orden con la configuración de tus métodos de pago (obligatorio)
+## Crear una página de pago en el cliente.
+
+### Inicializar el Component para tokenizar
+
+Carga nuestro paquete de JavaScript para mantenerte en cumplimiento con PCI asegurando que los detalles de pago sean enviados directamente a Conekta sin pasar por tu servidor.
+
+Inicializa el Component con tu [Llave Pública](https://developers.conekta.com/docs/como-obtener-tus-api-keys) para completar el pago desde el cliente:
+
+```html index.html
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Checkout</title>
+    <script
+      crossorigin
+      src="https://pay.conekta.com/v1.0/js/conekta-checkout.min.js"
+    ></script>
+    <!-- En este archivo esta la config del componente -->
+  </head>
+  <body>
+    <div id="example" style="height: 714px"></div>
+    <script type="text/javascript">
+      const options = {
+        backgroundMode: "lightMode", //lightMode o darkMode
+        colorPrimary: "#081133", //botones y bordes
+        colorText: "#585987", // títulos
+        colorLabel: "#585987", // input labels
+        inputType: "minimalMode", // minimalMode o flatMode
+      };
+      const config = {
+        locale: "es",
+        publicKey: "{{yourKey}}",
+        targetIFrame: "#example",
+      };
+
+      const callbacks = {
+        // Evento que permitirá saber que el token se creado de forma satisfactoria, es importante que se consuman los datos que de él derivan.
+        onCreateTokenSucceeded: function (token) {
+          console.log("token", token);
+        },
+        // Evento que permitirá saber que el token se creado de manera incorrecta, es importante que se consuman los datos que de él derivan y se hagan las correciones pertinentes.
+        onCreateTokenError: function (error) {
+          console.log(error);
+        },
+        // Evento que notifica cuando finalizó la carga del component/tokenizer
+        onGetInfoSuccess: function (loadingTime) {
+          console.log("loading time en milisegundos", loadingTime.initLoadTime);
+        },
+      };
+      window.ConektaCheckoutComponents.Card({
+        config,
+        callbacks,
+        options,
+      });
+    </script>
+  </body>
+</html>
+```
+
+_Así se visualiza el componente al renderizar_
+
+![](https://files.readme.io/94e9243-Desktop_3.png "Desktop (3).png")
+
+Con el Component inicializado en tu página de registro, tu usuario solo deberá llenar la información de la tarjeta y ejecutar el registro de la misma.
+
+Una vez confirmada la tokenización y registro de la tarjeta, se generará un evento _onCreateTokenSucceeded_ si el registro fue exitoso o si el registro es incorrecto se generará el evento _onCreateTokenError_.
+
+```json onCreateTokenSucceeded
+"tok_2q6cyio5sDqCyvYh7"
+```
+
+```json onCreateTokenError
+{
+  "details": [
+    {
+      "debug_message": "Unrecognized access key.",
+      "message": "Acceso no autorizado.",
+      "param": null,
+      "code": "conekta.errors.authentication.unrecognized_key"
+    }
+  ],
+  "object": "error",
+  "type": "authentication_error",
+  "log_id": null
+}
+```
+
+Por último, una vez obtenido el token de la tarjeta, envíalo a tu BackEnd para la creación de la orden con esta tarjeta. Recuerda que este token tiene una expiración de 10 minutos y solo se puede utilizar 1 vez para hacer un pago.
+
+## Crear una Orden (obligatorio)
 
 > 📘 ¿Qué es una Orden?
-> 
+>
 > Una Orden representa la intención de compra/pago de tu cliente. Incluye todos los detalles relacionados a los métodos de pago, información de envío, lista de productos a comprar/pagar, cargos, descuentos, impuestos, o cualquier información que se requiera por el negocio para documentar la transacción.
 
 La [orden](ref:createorder) requiere de cierta información que se obtiene ya sea de algún servicio interno del negocio, o directamente del FrontEnd al solicitarla al usuario/cliente final. Los datos principales traducidos a atributos del request son:
@@ -278,22 +375,14 @@ La [orden](ref:createorder) requiere de cierta información que se obtiene ya se
 
 Al iniciar, agrega el _endpoint_ en tu servidor para crear una [Orden](ref:createorder).
 
-#### Para habilitar los métodos de pago dentro del request:
-
-Utiliza el atributo **allowed_payment_methods** en el objeto **checkout** de la orden al momento de crearla.
-
-- Para habilitar la opción de pago con Tarjeta utiliza la palabra: "card"
-- Para habilitar la opción de pago con Transferencia Bancaria utiliza la palabra: "brank_transfer"
-- Para habilitar la opción de pago con Efectivo utiliza la palabra: "cash"
-
 #### Request
 
 ```curl cURL Request
--H "Accept: application/vnd.conekta-v2.1.0+json" \
+-H "Accept: application/vnd.conekta-v2.2.0+json" \
 -H "Content-type: application/json" \
 -u key_YOUR_PRIVATE_API_KEY: \
 -X POST -d '{
-"line_items": [{ 
+"line_items": [{
      "name": "Nombre del Producto o Servicio",
      "unit_price": 23000,
      "quantity": 1
@@ -307,12 +396,15 @@ Utiliza el atributo **allowed_payment_methods** en el objeto **checkout** de la 
     "metadata":{
      "datos_extra": "1234"
    },
-   "checkout": {
-     		"type": "Integration",
-        "allowed_payment_methods": ["card", "bank_transfer, "cash"] //Habilita todos los metodos de pago
+   "charges":[{
+     "payment_method": {
+       "type": "card",
+       "token_id": "tok_2q6cyio5sDqCyvYh7"
      }
+   }]
 }’https://api.conekta.io/orders
 ```
+
 ```json Response
 {
     "livemode": false,
@@ -381,161 +473,18 @@ Utiliza el atributo **allowed_payment_methods** en el objeto **checkout** de la 
                 "paid_at": 1676929550,
                 "fee": 1255,
                 "customer_id": "",
-                "order_id": "ord_2tQAKpPrfkdyzZvfM" 
+                "order_id": "ord_2tQAKpPrfkdyzZvfM"
             }
         ]
     }
 }
 ```
 
-Una vez creada la orden deberás obtener el Checkout ID asociado para inicializar el Component embebido en tu página de Checkout.
-
-## Crear una página de pago en el cliente.
-
-### Inicializar el Component
-
-Carga nuestro paquete de JavaScript para mantenerte en cumplimiento con PCI asegurando que los detalles de pago sean enviados directamente a Conekta sin pasar por tu servidor.
-
-Inicializa el **Component** con tu [Llave Pública](https://developers.conekta.com/docs/como-obtener-tus-api-keys) para completar el pago desde el Cliente:
-
-```html index.html
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Checkout</title>
-    <script
-      crossorigin
-      src="https://pay.conekta.com/v1.0/js/conekta-checkout.min.js"
-    ></script>
-    <!-- En este archivo esta la config del componente -->
-  </head>
-  <body>
-    <div id="example" style="height: 714px"></div>
-    <script type="text/javascript">
-      // options es opcional, si se setea height al div container la prop autoResize no funcionará, se debe usar uno u otro
-      const options = {
-        backgroundMode: 'lightMode', //lightMode o darkMode
-        colorPrimary: '#081133', //botones y bordes
-        colorText: '#585987', // títulos
-        colorLabel: '#585987', // input labels
-        inputType: 'minimalMode', // minimalMode o flatMode
-      };
-      const config = {
-        locale: 'es',
-        publicKey: '{{yourKey}}',
-        targetIFrame: '#example',
-        checkoutRequestId: '{{checkoutRequestId}}',
-      };
-
-      const callbacks = {
-        // Evento que notifica cuando finalizó la carga del component/tokenizer
-        onGetInfoSuccess: function (loadingTime) {
-          console.log('loading time en milisegundos', loadingTime.initLoadTime);
-        },
-        // Evento que notifica cuando finalizó el pago correctamente
-        onFinalizePayment: function (order) {
-          console.log('success: ', JSON.stringify(order));
-        },
-        // Evento que notifica cuando finalizó la carga del component/tokenizer
-        onErrorPayment: function (error) {
-          console.log('error en pago: ', error);
-        },
-      };
-      window.ConektaCheckoutComponents.Integration({
-        config,
-        callbacks,
-        options
-      });
-    </script>
-  </body>
-</html>
-
-```
-
-**Nota:** Con la configuración anterior tu componente de pago tendrá un alto fijo,si el contenido del componente de pago es más alto que el definido aparecerá un scroll automaticamente.
-
-Si quieres que tu componente de pago no tenga un alto fijo sino que se adapte al alto del contenido puedes hacerlo evitando establecer el alto al contenedor y agregando el atributo_ **autoresize: true**_ a las options.
-
-<br />
-
-```html index.html
-<html>
-  ...
-  <body>
-    <div id="example"></div>  <!-- contenedor sin height -->
-    <script type="text/javascript">
-      const options = {
-        ...,
-        autoResize: true // activamos el autoResize
-      };
-       </script>
-  </body>
-</html>
-
-```
-
-Con el Component inicializado en tu Checkout, tu usuario solo deberá seleccionar el método de pago que desee utilizar y seguir las instrucciones para concretar la compra.
-
-El componente renderizado con los 3 métodos de pago habilitados, deberá verse así en tu sitio o aplicación:
-
-![](https://files.readme.io/436a44391d8ba758d231f74e8b4ded1c70cbd449057b05187ba587491e8eba1c-image.png)
-
-Si solo activaste un método de pago deberá visualizarse así:
-
-#### **Tarjeta**
-
-![](https://files.readme.io/60c6d7f-image.png)
-
-#### **Transferencia**
-
-[block:image]
-{
-  "images": [
-    {
-      "image": [
-        "https://files.readme.io/5967382-image.png",
-        null,
-        ""
-      ],
-      "align": "center",
-      "sizing": "400px"
-    }
-  ]
-}
-[/block]
-
-
-#### **Cash**
-
-**Pagos con Conekta Efectivo** 
-
-![](https://files.readme.io/1e40aab3d1c463c82eb69e134a14794ff1cc03a5647ed87f6c7c8a7c55cfa28f-image.png)
-
-<br />
-
-```json onFinalizePayment
-{
-    "id": "ord_2sxz1L8TSv8RufVZV",
-    "reference": "646180111812345678",
-    "charge": {
-        "id": "638e615afede9b001793237e",
-        "currency": "MXN",
-        "payment_method": {
-            "type": "card"
-        },
-        "status": "pending_payment",
-        "customer_id": "",
-        "order_id": "ord_2sxz1L8TSv8RufVZV"
-    },
-    "metaData": {}
-}
-```
-
-Por último, una vez confirmado el pago, se generará un evento _onFinalizePayment_ en el Cliente el cual te mostrará la información de la orden y el cargo. En este momento podrás tomar decisiones relacionadas con el estado de la compra como re-direccionar a una página de pago exitoso o a una página con el resumen de la compra.
+Con esto has finalizado el proceso de pago. Con este request puedes recibir el resultado de un pago exitoso, alguna declinación por el Sistema Antifraude de Conekta o una declinación Bancaria. Muestra el mensaje de respuesta a tu cliente como mejor le convenga a tu negocio.
 
 ## Capturar eventos del pago
 
-Automatiza tus procesos a través de los eventos que se generan en el flujo de pago. Para recibir estos eventos y ejecutar acciones sigue la guía de [webhooks](doc:eventos-webhooks)  
+Automatiza tus procesos a través de los eventos que se generan en el flujo de pago. Para recibir estos eventos y ejecutar acciones sigue la guía de [webhooks](doc:eventos-webhooks)
 
 Te recomendamos capturar los siguientes eventos:
 

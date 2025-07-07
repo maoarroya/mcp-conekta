@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "conekta-payment-components": {
+      "command": "node",
+      "args": ["src/mcp-server.js"],
+      "cwd": ".",
+      "env": {}
+    }
+  }
+} 
